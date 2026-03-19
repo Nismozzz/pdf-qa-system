@@ -8,9 +8,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def load_vector_store():
+    embedding_model = os.getenv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    embedding_device = os.getenv("EMBEDDING_DEVICE", "cpu")
     embeddings = HuggingFaceEmbeddings(
-        model_name=r"D:\大学\大四上\学校实习\车站项目\车站项目_新\models\paraphrase-multilingual-MiniLM-L12-v2",
-        model_kwargs={'device': 'cuda'},
+        model_name=embedding_model,
+        model_kwargs={'device': embedding_device},
         encode_kwargs={'normalize_embeddings': True}
     )
     vector_db_path = os.getenv("VECTOR_DB_PATH", "./vector_db")
@@ -21,10 +23,12 @@ def load_vector_store():
     return vectorstore
 
 def get_zhipu_response(question, context):
-    api_key = os.getenv("ZHIPU_API_KEY")
+    api_key = os.getenv("LLM_API_KEY")
+    base_url = os.getenv("LLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4/")
+    model_name = os.getenv("LLM_MODEL", "glm-4-flash")
     client = OpenAI(
         api_key=api_key,
-        base_url="https://open.bigmodel.cn/api/paas/v4/"
+        base_url=base_url,
     )
 
     prompt = f"""基于以下文献内容回答问题。如果文献中没有相关信息，请说明。
@@ -37,7 +41,7 @@ def get_zhipu_response(question, context):
 请用中文回答："""
 
     response = client.chat.completions.create(
-        model="glm-4.7-flash",
+        model=model_name,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
     )

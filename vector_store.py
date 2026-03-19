@@ -4,9 +4,12 @@
 """
 import os
 from typing import List
+from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
+
+load_dotenv()
 
 
 class VectorStore:
@@ -19,9 +22,11 @@ class VectorStore:
         """
         self.persist_directory = persist_directory
         # 使用本地的中文embedding模型
+        embedding_model = os.getenv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+        embedding_device = os.getenv("EMBEDDING_DEVICE", "cpu")
         self.embeddings = HuggingFaceEmbeddings(
-            model_name=r"D:\大学\大四上\学校实习\车站项目\车站项目_新\models\paraphrase-multilingual-MiniLM-L12-v2",
-            model_kwargs={'device': 'cuda'},
+            model_name=embedding_model,
+            model_kwargs={'device': embedding_device},
             encode_kwargs={'normalize_embeddings': True}
         )
         self.vectorstore = None
