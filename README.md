@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ### 3. 处理文献
 
-将 PDF 文件放入 `documents/` 文件夹，然后运行：
+将 PDF 文件放入 `documents/` 文件夹（需要新建），然后运行：
 
 ```bash
 python process_documents.py
